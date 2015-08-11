@@ -409,7 +409,7 @@ Returns the maximum value in list. If an iteratee function is provided, it will
 _.max = function(list, iteratee){
   //declare variable maxValue === null
   var maxValue;
-  if (list.constructor === Array){
+  if (Array.isArray(list)){
     maxValue = list[0];
     for (var i = 1; i < list.length; i++){
       if(iteratee(list[i]) > iteratee(maxValue)){
@@ -487,6 +487,56 @@ var length = _.groupBy(['one', 'two', 'three'], 'length');
 
 var oddOrEven = _.groupBy({num: 7, num2: 10, num3:2}, function(element){return element % 2 === 0 ? 'even' : 'odd' ;});
 // => {even: [10,2], odd: [7]}
+
+/* indexBy
+_.indexBy(list, iteratee, [context])
+Given a list, and an iteratee function that returns a key for each element in the
+ list (or a property name), returns an object with an index of each item. Just
+  like groupBy, but for when you know your keys are unique.*/
+
+_.indexBy = function(list,iteratee){
+    //create a new empty object 'indexed'
+    //declare a group variable
+    //use _.each to loop through the list
+    //_.each(list, grouping)
+      //grouping takes an element as a parameter
+      //if iteratee is a string -> group = element[iteratee]
+      //else -> group = element[iteratee(element)]
+      //check if group in indexed
+        //if true -> add element to indexed[group]
+        //else -> indexed[group] = [element]
+    //return indexed
+  var indexed = {};
+  var group;
+  _.each(list, function(element){
+    if(typeof iteratee === 'string'){
+      group = element[iteratee];
+    } else {
+      group = element[iteratee(element)];
+    }
+    if(indexed.hasOwnProperty(group)){
+      indexed[group].push(element);
+    } else {
+      indexed[group] = [element];
+    }
+  });
+  return indexed;
+}
+
+var stooges = [{name: 'moe', age: 40}, {name: 'larry', age: 50}, {name: 'curly', age: 60}];
+var age = _.indexBy(stooges, 'age');
+/*=> {
+  "40": {name: 'moe', age: 40},
+  "50": {name: 'larry', age: 50},
+  "60": {name: 'curly', age: 60}
+}*/
+
+var ageOrName = _.indexBy(stooges, function(element){return element.age > 50 ? 'name' : 'age';});
+/*=> {
+  "40": {name: 'moe', age: 40},
+  "50": {name: 'larry', age: 50},
+  curly: {name: 'curly', age: 60}
+}*/
 //Arrays
 
 /*first
@@ -654,7 +704,7 @@ _.flatten= function(array){
 
 //test examples
 console.log(_.flatten([1, [2], [3, [[4]]]]););
-// -> [1,2,3]
+// -> [1,2,3,4]
 
 /*without
 _.without(array, *values)
