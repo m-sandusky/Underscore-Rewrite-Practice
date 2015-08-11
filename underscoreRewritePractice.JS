@@ -170,7 +170,7 @@ var arrayReduce = [4,5,6,7];
 var listReduce = {a: 5, b: 7, c:-4};
 
 console.log(reduce(arrayReduce, function(a,b){return a - b ;}));
-// -> 22
+// -> -14
 console.log(reduce(listReduce, function(a,b){return a+b;}));
 // -> 8
 
@@ -447,7 +447,6 @@ Splits a collection into sets, grouped by the result of running each value
 through iteratee. If iteratee is a string instead of a function, groups by the
 property named by iteratee on each of the values.*/
 
-_.groupBy = function(list, iteratee){
   //declare a new object to add groups to
   //loop through each element in the list and determine what group it belongs to determined by iteratee
   //use _.each() passing in list and function(element)
@@ -455,22 +454,39 @@ _.groupBy = function(list, iteratee){
   //if the group variable exists in the object, then we push the element to object[group]
   //if it doesn't exist, we create a new property on object named 'group' and set it equal to [element]
 
-  var grouped = {};
-  _.each(list, function(element){
-    var group = iteratee(element)
-    if (grouped.hasOwnProperty(group)){
-      grouped[group].push(element);
+_.groupBy = function(collection, grouping){
+    //create a new empty object 'grouped'
+    //loop through collection using each(collection, callback)
+    // callback -> grouping(element) and store the result in a temporary value
+      //check to see if the value is a property in grouped
+      //if true -> add element to appropriate property in grouped
+      //else -> create the property and set it equal to [element]
+    //return grouped
+  var sorted ={};
+  var group;
+  _.each(collection, function(element){
+    if(typeof grouping === 'string'){
+      group = element[grouping];
+    } else{
+      group = grouping(element);
     }
-    else{
-      grouped[group] = [element]
+    if(sorted.hasOwnProperty(group)){
+      sorted[group].push(element);
+    } else {
+      sorted[group] = [element];
     }
   });
-  return grouped;
+  return sorted;
 }
 
+var floor = _.groupBy([1.3, 2.1, 2.4], function(num){ return Math.floor(num); });
+//=> {1: [1.3], 2: [2.1, 2.4]}
 
+var length = _.groupBy(['one', 'two', 'three'], 'length');
+// => {3: ["one", "two"], 5: ["three"]}
 
-
+var oddOrEven = _.groupBy({num: 7, num2: 10, num3:2}, function(element){return element % 2 === 0 ? 'even' : 'odd' ;});
+// => {even: [10,2], odd: [7]}
 //Arrays
 
 /*first
