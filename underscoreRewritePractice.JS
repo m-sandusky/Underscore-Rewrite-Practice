@@ -441,6 +441,30 @@ var modArray = [22, 5, 10, 2, 23];
 console.log(_.max(modArray, function(element){return element % 5}));
 // -> 8
 
+/*sortBy
+_.sortBy(list, iteratee, [context])
+Returns a (stably) sorted copy of list, ranked in ascending order by the results
+ of running each value through iteratee. iteratee may also be the string name of
+  the property to sort by (eg. length).*/
+_.sortBy = function(list, iteratee){
+    //map list to be an array of objects with two properties (the element itself and the iteratee(element)) -> this can be used to compare when sorted
+    //sort the mapped list by lowest iteratee(element) ot greatest value of iteratee(element)
+    //return a new list 'plucking' the elements from the sorted, mapped list
+  var sorted = _.pluck(_.map(list, function(element){
+    if(typeof iteratee === 'string'){
+      return {obj: element, compare: element[iteratee]};
+    } else {
+      return  {obj: element, compare: iteratee(element)};
+    }
+  }).sort(function(a,b){
+      if(typeof a['compare'] === 'string'){
+        return a['compare'] < b['compare'] ? -1 : (a['compare'] > b['compare'] ? 1 : 0]);
+      } else {
+        return a['compare'] - b['compare'];
+      }
+  }), 'obj');
+  return sorted;
+}
 /*groupBy
 _.groupBy(list, iteratee, [context])
 Splits a collection into sets, grouped by the result of running each value
