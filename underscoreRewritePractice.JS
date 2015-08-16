@@ -465,12 +465,18 @@ _.sortBy = function(list, iteratee){
   }), 'obj');
   return sorted;
 }
+
+_.sortBy([1, 2, 3, 4, 5, 6], function(num){ return Math.sin(num); });
+//=> [5, 4, 6, 3, 1, 2]
+
+var stooges = [{name: 'moe', age: 40}, {name: 'larry', age: 50}, {name: 'curly', age: 60}];
+_.sortBy(stooges, 'name');
+//=> [{name: 'curly', age: 60}, {name: 'larry', age: 50}, {name: 'moe', age: 40}];
 /*groupBy
 _.groupBy(list, iteratee, [context])
 Splits a collection into sets, grouped by the result of running each value
 through iteratee. If iteratee is a string instead of a function, groups by the
 property named by iteratee on each of the values.*/
-
   //declare a new object to add groups to
   //loop through each element in the list and determine what group it belongs to determined by iteratee
   //use _.each() passing in list and function(element)
