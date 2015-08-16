@@ -282,34 +282,82 @@ _.where(list, properties)
 Looks through each value in the list, returning an array of all the values
 that contain all of the key-value pairs listed in properties.*/
 
-//separate properties by using for in loop
-//check the arguments to gather how many properties are passed
-//loop through the properties...
-//loop through the list checking if property exists at an element, we push that element to a new array
-//this loops through every property passed eventually 'filtering' out all elements that don't have the specified properties
-
-/*_.where = function(list, properties){
-  var where = [];
-  var propertiesArray = [];
-  var propertyValue = [];
-  for (var prop in arguments[1]){
-    propertiesArray.push(prop);
-    propertyValue.push(arguments[1][prop]);
-  };
-  for(var i = 0; i <list.length; i++){
-    for (var j = 0; j < propertiesArray.length; j++){
-            if ((propertiesArray[j] in list[i]) && (list[propertiesArray[j]] === propertyValue[j])){
-              where.push(list[i]);
-            }
-          }
-        }
-        return where;
-
+_.where = function(collection, properties){
+  //declare new empty array
+  //loop through collection
+  //for each element, check if properties are contained within element
+  //if they are -> add element to new array
+  var whereArr = [];
+  var temp = true;
+    _.each(collection, function(element){
+    for(var prop in properties){
+      if (element[prop] !== properties[prop]){
+        temp = false;
+        break;
+      }
+    }
+    if (temp){
+      whereArr.push(element);
+    }
+    temp = true;
+  });
+  return whereArr;
 }
 
-//test cases
-console.log(_.where([{a: 'Lion', b: 'Tiger', c: 'Bear'}, {a:'Lion', b: 'Monkey', d: 'Bear'}], {a: 'Lion', c: 'Bear'}));*/
+//using _.filter
 
+_.where = function(collection, properties){
+  //use filter to obtain only elements that have properties
+  //filter(collection, predicate)
+  //predicate(element)
+    //loops through properties and checks if element has properties
+  return _.filter(collection, function(element){
+    for (var prop in properties){
+      if(element[prop] !== properties[prop]){
+        return false;
+      }
+    }
+    return true;
+  });
+}
+
+users = [
+  { 'user': 'barney', 'age': 36, 'active': false, 'pets': ['hoppy'] },
+  { 'user': 'fred',   'age': 40, 'active': true, 'pets': ['baby puss', 'dino'] }
+  { 'user': 'bob', 'age': 36, 'active': false}
+];
+
+console.log(_.where(users, { 'age': 36, 'active': false }));
+
+//test cases
+console.log(_.where([{a: 'Lion', b: 'Tiger', c: 'Bear'}, {a:'Lion', b: 'Monkey', d: 'Bear'}], {a: 'Lion', c: 'Bear'}));
+
+/*findWhere
+Looks through the list and returns the first value that matches all of the
+ key-value pairs listed in properties.
+If no match is found, or if list is empty, undefined will be returned.
+*/
+
+_.findWhere = function(collection, properties){
+  //use find, to find the first element that have 'properties'
+  return _.find(collection, function(element){
+    for (var prop in properties){
+      if(element[prop] !== properties[prop]){
+        return false;
+      }
+    }
+    return true;
+  });
+}
+
+
+users = [
+  { 'user': 'barney', 'age': 36, 'active': false, 'pets': ['hoppy'] },
+  { 'user': 'fred',   'age': 40, 'active': true, 'pets': ['baby puss', 'dino'] },
+  { 'user': 'bob', 'age': 36, 'active': false}
+];
+
+console.log(_.findWhere(users, {'active': false}));
 /*reject
 _.reject(list, predicate, [context])
 Returns the values in list without the elements that the truth test (predicate)
@@ -359,6 +407,68 @@ _.every = function (list, predicate){
   //if object, loop through object, if any predicate(list[key]) === false -> return false
   //otherwise return true after loop concludes
 }
+
+/*some
+_.some(list, [predicate], [context]) Alias: any
+Returns true if any of the values in the list pass the predicate truth test.
+Short-circuits and stops traversing the list if a true element is found.
+*/
+
+_.some = function(collection, predicate){
+  //determine is collection is array or object
+  //if array -> loop through
+    //if predicate(element) is true -> return true
+  //after looping return false
+  //else loop through object
+    //if (predicate(collection[prop]) is true) -> return true
+  //after looping return false
+  if (Array.isArray(collection)){
+    for(var i = 0; i < collection.length; i++){
+      if(predicate(collection[i])){
+        return true;
+      }
+    }
+  } else {
+    for (var prop in collection){
+      if(predicate(collection[prop])){
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+/*contains
+_.contains(list, value, [fromIndex]) Alias: includes
+Returns true if the value is present in the list. Uses indexOf internally, if
+list is an Array. Use fromIndex to start your search at a given index*/
+_.contains = function(list, value, startIndex){
+  //define variable count set to 0
+  //use some to loop through list
+  //some(list, predicate)
+    //predicate(element)
+    //if (startIndex === count)
+      //if element === value -> returns true
+    // else -> count++, return false
+  var count = 0;
+  if(startIndex === undefined){
+    startIndex = 0;
+  }
+  return _.some(list, function(element){
+    if(startIndex === count){
+      if(element === value){
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      count ++;
+      return false;
+    }
+  });
+}
+console.log(contains([1, 2, 3], 3));
+//  => true
 
 /*invoke
 _.invoke(list, methodName, *arguments)
